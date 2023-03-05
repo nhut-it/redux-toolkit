@@ -1,0 +1,5 @@
+export const ADD_TODO='todoList/addTodo'
+export const SEARCH='filter/search'
+export const STATUS='filter/status'
+export const PRIORITY='filter/priority'
+export const TOGGLE_STATUS='todoList/toggleStatus'

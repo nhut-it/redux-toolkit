@@ -1,9 +1,47 @@
 import { Button, Divider, Input, Select, Tag } from "antd";
+import { useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import "./App.css";
 import Filters from "./components/Filters";
 import TodoList from "./components/TodoList";
+// import addTodoAction from "./redux/action";
+import { v4 as uuid } from "uuid";
+import { todoListSelector } from "./redux/selectors";
+import { addTodo } from "./components/TodoList/todoListSlice";
 const { Option } = Select;
 function App() {
+  const [inputText, setInputText] = useState("");
+  const [priority, setPriority] = useState("Hight");
+  const state = useSelector(todoListSelector);
+  const inputRef=useRef()
+  const dispatch = useDispatch();
+  const handelInputChange = (e) => {
+    setInputText(e.target.value);
+  };
+
+  const handelChangePriority = (value) => {
+    setPriority(value);
+  };
+
+  const handelAddTodo = () => {
+    if(inputText.trim()!=''){
+      dispatch(
+        addTodo({
+          id: uuid(),
+          name: inputText,
+          completed: false,
+          priority,
+        })
+      );
+
+      setInputText("");
+    }
+    else{
+      inputRef.current.focus()
+      console.log({inputRef})
+    }
+  };
+  // console.log({ id: uuid(), name: inputText, completed: false, priority });
   return (
     <div
       className="App
@@ -24,26 +62,35 @@ function App() {
       <TodoList />
 
       <Input.Group compact>
-        <Input placeholder="add todo " style={{ width: "60%" }} />
-        <Select
-        
+        <Input
+          value={inputText}
+          onChange={handelInputChange}
+          placeholder="add todo "
+          style={{ width: "60%" }}
+          ref={inputRef}
+        />
 
-        className=""
-        style={{width:'22%'}}
-        defaultValue={["hight"]}
-      >
-        <Option value="hight">
-          <Tag color="red">hight</Tag>
-        </Option>
-        <Option value="medium">
-          <Tag color="green">Medium</Tag>
-        </Option>
-        <Option value="low">
-          <Tag color="gray">Low</Tag>
-        </Option>
-       
-      </Select>
-        <Button style={{ width: "18%" }} className="bg-blue-500 text-white ">
+        <Select
+          value={priority}
+          onChange={handelChangePriority}
+          defaultValue="Hight"
+          style={{ width: "22%" }}
+        >
+          <Option value="Hight">
+            <Tag color="red">Hight</Tag>
+          </Option>
+          <Option value="Medium">
+            <Tag color="green">Medium</Tag>
+          </Option>
+          <Option value="Low">
+            <Tag color="gray">Low</Tag>
+          </Option>
+        </Select>
+        <Button
+          onClick={handelAddTodo}
+          style={{ width: "18%" }}
+          className="bg-blue-500 text-white "
+        >
           Add
         </Button>
       </Input.Group>
